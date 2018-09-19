@@ -15,7 +15,7 @@
         </div>
       </div>
     </div>
-    <div class="posts ml-4">
+    <div class="posts">
       <a href='#/post' v-on:click='list()'><strong>All Posts:</strong></a>
       <router-link v-for='post in posts' :key='post._id' :to="{name: 'postdetail', params: {id:`${post._id}`}}"><br>{{ post.title }}</router-link>
     </div>
@@ -56,6 +56,22 @@ export default {
       } else {
         this.openModal = true
       }
+    },
+    addPost: function () {
+      axios({
+        method: 'post',
+        url: 'http://localhost:3000/articles/',
+        data: { title: this.newtitle, content: this.newcontent, token: localStorage.getItem('jwtToken') }
+      })
+        .then(data => {
+          this.openModal = false
+          this.newtitle = ''
+          this.newcontent = ''
+          this.list()
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   },
   created () {
@@ -85,9 +101,6 @@ export default {
     height: 50px;
     width: 100%;
     border-radius: 25px
-  }
-  .model-body textarea{
-    width: 2000px
   }
   #backdrop {
     position: fixed;

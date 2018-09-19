@@ -6,6 +6,6 @@ var { isLogin } = require('../middlewares/isLogin')
 router.get('/', show)
 router.get('/:id', showOne )
 router.post('/', isLogin, add)
-router.delete('/', remove)
+router.delete('/', isLogin, remove)
 
 module.exports = router;

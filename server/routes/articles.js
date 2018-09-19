@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
-var { show, add, remove } = require('../controllers/articleController')
+var { show, showOne, add, remove } = require('../controllers/articleController')
+var { isLogin } = require('../middlewares/isLogin')
 
 router.get('/', show)
-router.post('/', add)
+router.get('/:id', showOne )
+router.post('/', isLogin, add)
 router.delete('/', remove)
 
 module.exports = router;

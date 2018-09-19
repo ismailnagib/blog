@@ -1,6 +1,6 @@
 <template>
   <div class="row mx-auto" v-if='showAll'>
-    <div class="col-12 card mb-4" v-for='post in posts' :key='post._id' v-on:click='showDetail(post.title, post.content)'>
+    <div class="col-12 card mb-4" v-for='post in posts' :key='post._id'>
       <img class="card-img-top" src="https://via.placeholder.com/700x300">
       <div class="card-body">
         <h5 class="card-title">{{ post.title }}</h5>
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 
 export default {
   name: 'postlarge',
@@ -31,22 +32,30 @@ export default {
     }
   },
   methods: {
-    showDetail: function (title, content) {
-      this.showAll = false
-      this.detailed.title = title
-      this.detailed.content = content
+    showOne: function (id) {
+      if (id !== undefined) {
+        axios({
+          method: 'get',
+          url: `http://localhost:3000/articles/${id}`
+        })
+          .then(data => {
+            this.detailed = {
+              title: data.data.data.title,
+              content: data.data.data.content
+            }
+            this.showAll = false
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      } else {
+        this.showAll = true
+      }
     }
   },
   watch: {
-    posts: {
-      handler: function () {
-        if (this.posts.length === 1) {
-          this.showDetail(this.posts[0].title, this.posts[0].content)
-        } else {
-          this.showAll = true
-        }
-      },
-      deep: true
+    '$route': function () {
+      this.showOne(this.$route.params.id)
     }
   }
 }

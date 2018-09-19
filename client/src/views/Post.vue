@@ -7,7 +7,7 @@
             placeholder
           </div>
           <div class="row my-2">
-              <postlist v-bind:islogin='islogin' @list='throwPost' @detail='throwSelected'></postlist>
+              <postlist v-bind:islogin='islogin' @list='throwPost'></postlist>
           </div>
         </div>
         <div class="col-7">
@@ -27,18 +27,12 @@ export default {
   props: ['islogin'],
   data: function () {
     return {
-      posts: [{}],
+      posts: [{}]
     }
   },
   methods: {
     throwPost: function (value) {
       this.posts = value
-    },
-    throwSelected: function (value) {
-      this.posts = [{
-        title: value[0],
-        content: value[1]
-      }]
     }
   },
   components: {
@@ -51,5 +45,8 @@ export default {
 <style>
   .post {
     margin-top: 12vh;
+  }
+  textarea:focus, input:focus, button:focus {
+    outline: none;
   }
 </style>

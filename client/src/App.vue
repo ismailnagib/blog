@@ -70,5 +70,6 @@ export default {
 
 #header {
   height: 8vh;
+  background-color: white;
 }
 </style>

@@ -7,11 +7,11 @@
             placeholder
           </div>
           <div class="row my-2">
-              <postlist v-bind:islogin='islogin' @list='throwPost'></postlist>
+              <postlist v-bind:islogin='islogin' v-bind:needreload='needreload' @list='throwPost' @reloaded='toggleReload'></postlist>
           </div>
         </div>
         <div class="col-7">
-          <postlarge v-bind:posts='posts'></postlarge>
+          <postlarge v-bind:islogin='islogin' v-bind:posts='posts' @reload='toggleReload'></postlarge>
         </div>
       </div>
     </div>
@@ -27,12 +27,20 @@ export default {
   props: ['islogin'],
   data: function () {
     return {
-      posts: [{}]
+      posts: [{}],
+      needreload: false
     }
   },
   methods: {
     throwPost: function (value) {
       this.posts = value
+    },
+    toggleReload: function (value) {
+      if (this.needreload) {
+        this.needreload = false
+      } else {
+        this.needreload = true
+      }
     }
   },
   components: {

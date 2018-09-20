@@ -31,6 +31,7 @@ export default {
       })
         .then(data => {
           localStorage.setItem('jwtToken', data.data.token)
+          localStorage.setItem('userId', data.data.userId)
           this.islogin = true
           this.noticeColor = 'white'
           this.notice = 'placeholder'
@@ -59,6 +60,7 @@ export default {
         })
         .catch(err => {
           this.islogin = false
+          localStorage.clear()
           console.log(err)
         })
     },

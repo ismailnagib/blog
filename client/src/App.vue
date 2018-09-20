@@ -20,7 +20,7 @@
         </div>
       </nav>
       <div class="col-md-1 col-lg-2 col-xl-4"></div>
-      <loginform class="col-md-8 col-lg-7 col-xl-5" @log='logChange'></loginform>
+      <loginform id='loginform' class="col-md-8 col-lg-7 col-xl-5" @log='logChange'></loginform>
     </div>
     <router-view v-bind:islogin='islogin'></router-view>
   </div>
@@ -71,5 +71,9 @@ export default {
 #header {
   height: 8vh;
   background-color: white;
+}
+#loginform {
+  text-align: right;
+  right: 10%;
 }
 </style>

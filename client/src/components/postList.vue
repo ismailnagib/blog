@@ -10,8 +10,8 @@
             <input v-model='newtitle' type="text" placeholder="Title">
             <textarea rows=18 v-model='newcontent' placeholder="Content"></textarea>
           </div>
-          <button class='modalBtn' v-on:click="addPost()">Post It Now!</button>
-          <button class='modalBtn' v-on:click="toggleModal()">Maybe Later</button><br>
+          <button class='modalBtn' v-on:click="toggleModal()">Maybe Later</button>
+          <button class='modalBtn' v-on:click="addPost()">Post It Now!</button><br>
         </div>
       </div>
     </div>
@@ -27,7 +27,7 @@ import axios from 'axios'
 
 export default {
   name: 'postlist',
-  props: ['islogin'],
+  props: ['islogin', 'needreload'],
   data: function () {
     return {
       posts: [{}],
@@ -76,6 +76,14 @@ export default {
   },
   created () {
     this.list()
+  },
+  watch: {
+    needreload: function () {
+      if (this.needreload) {
+        this.list()
+        this.$emit('reloaded')
+      }
+    }
   }
 }
 </script>

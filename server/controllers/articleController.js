@@ -38,6 +38,22 @@ module.exports = {
         })
     },
 
+    edit: function(req, res) {
+        Article.updateOne({
+            _id: req.body.id,
+            author: req.userId
+        }, {
+            title: req.body.title,
+            content: req.body.content
+        })
+        .then(data => {
+            res.status(200).json({data: data})
+        })
+        .catch(err => {
+            res.status(500).json({message: err})
+        })
+    },
+
     remove: function(req, res) {
         Article.deleteOne({
             _id: req.body.id,

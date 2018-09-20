@@ -2,7 +2,7 @@
   <div id='postLarge'>
     <div class="row mx-auto" v-if='showAll'>
       <div class="col-12 card mb-4" v-for='post in posts' :key='post._id'>
-        <div class="cardBtn" v-if='isAuthor'>
+        <div class="cardBtn" v-if='loggedInAuthor === post.author._id'>
           <button v-on:click='removeModal(post._id)'><i class="fas fa-trash-alt"></i></button>
           <button v-on:click='editModal(post._id, post.title, post.content)'><i class="fas fa-edit"></i></button>
         </div>
@@ -55,12 +55,12 @@ import axios from 'axios'
 
 export default {
   name: 'postlarge',
-  props: ['posts'],
+  props: ['posts', 'islogin'],
   data: function () {
     return {
       showAll: true,
       detailed: {},
-      isAuthor: true,
+      loggedInAuthor: localStorage.getItem('userId'),
       openEdit: false,
       openRemove: false,
       newtitle: '',
@@ -104,7 +104,18 @@ export default {
       }
     },
     editPost: function () {
-
+      axios({
+        method: 'put',
+        url: 'http://localhost:3000/articles/',
+        data: { id: this.editId, token: localStorage.getItem('jwtToken'), title: this.newtitle, content: this.newcontent }
+      })
+        .then(data => {
+          this.$emit('reload')
+          this.openEdit = false
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     removeModal: function (id) {
       if (this.openRemove) {
@@ -115,7 +126,6 @@ export default {
       if (id) {
         this.removeId = id
       }
-      console.log(this.$parent.posts)
     },
     removePost: function () {
       axios({
@@ -124,15 +134,11 @@ export default {
         data: { id: this.removeId, token: localStorage.getItem('jwtToken') }
       })
         .then(data => {
-          for (var i = 0; i < this.$parent.posts.length; i++) {
-            if (this.$parent.posts[i]._id === this.removeId) {
-              this.$parent.posts.splice(i, 1)
-            }
-          }
+          this.$emit('reload')
           this.openRemove = false
         })
         .catch(err => {
-          alert(err)
+          console.log(err)
         })
     }
   },
@@ -152,6 +158,9 @@ export default {
   watch: {
     '$route': function () {
       this.showOne(this.$route.params.id)
+    },
+    islogin: function () {
+      this.loggedInAuthor = localStorage.getItem('userId')
     }
   }
 }

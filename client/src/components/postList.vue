@@ -95,10 +95,10 @@ export default {
   .posts {
     margin-top: 3vh;
   }
-  a {
+  .posts a {
     color: black;
   }
-  a:hover {
+  .posts a:hover {
     color: #42b983;
   }
   #toggleModal {

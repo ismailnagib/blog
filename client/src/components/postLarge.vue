@@ -1,17 +1,17 @@
 <template>
   <div id='postLarge'>
     <div class="row mx-auto" v-if='showAll'>
-      <div class="col-12 card mb-4" v-for='post in posts' :key='post._id'>
+      <router-link :to="{name: 'postdetail', params: {id:`${post._id}`}}" class="col-12 card mb-4" v-for='post in posts' :key='post._id'>
         <div class="cardBtn" v-if='loggedInAuthor === post.author._id'>
           <button v-on:click='removeModal(post._id)'><i class="fas fa-trash-alt"></i></button>
           <button v-on:click='editModal(post._id, post.title, post.content)'><i class="fas fa-edit"></i></button>
         </div>
         <img class="card-img-top" src="https://via.placeholder.com/700x300">
         <div class="card-body">
-          <h5 class="card-title">{{ post.title }}</h5>
+          <h5 id='postTitle' class="card-title border-bottom mb-4 pb-2"><strong>{{ post.title }}</strong></h5>
           <p class="card-text">{{ post.content  | slice  }}</p>
         </div>
-      </div>
+      </router-link>
     </div>
     <div class='row' v-else>
       <div class="col-12">
@@ -174,6 +174,13 @@ export default {
     word-wrap: break-word;
     text-align: justify;
     text-indent: 10%;
+  }
+  #postLarge a {
+    text-decoration: none;
+    color: black;
+  }
+  #postLarge #postTitle:hover {
+    color: #42b983
   }
   .cardBtn button {
     margin: 5px 0;

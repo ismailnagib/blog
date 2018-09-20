@@ -1,10 +1,12 @@
 const Comment = require('../models/commentModel')
+const Article = require('../models/articleModel')
+const User = require('../models/userModel')
 
 module.exports = {
     
     show: function(req, res) {
         Comment.find({})
-        .populate('writer')
+        .populate('commenter')
         .then(data => {
             res.status(200).json({data: data})
         })
@@ -15,28 +17,26 @@ module.exports = {
 
     add: function(req, res) {
         Comment.create({
-            title: req.body.title,
-            content: req.body.content,
-            author: req.userId
+            words: req.body.words,
+            commenter: req.userId
         })
-        .then(data => {
-            res.status(201).json({data: data})
-        })
-        .catch(err => {
-            res.status(500).json({message: err})
-        })
-    },
-
-    edit: function(req, res) {
-        Comment.updateOne({
-            _id: req.body.id,
-            author: req.userId
-        }, {
-            title: req.body.title,
-            content: req.body.content
-        })
-        .then(data => {
-            res.status(200).json({data: data})
+        .then(comment => {
+            Article.findById(req.body.postId)
+            .then(article => {
+                let comments = article.comments
+                comments.push(comment._id)
+                Article.updateOne({
+                    _id: req.body.postId
+                }, {
+                    comments: comments
+                })
+                .then(data => {
+                    res.status(200).json({data: data})
+                })
+                .catch(err => {
+                    res.status(500).json({message: err})
+                })
+            })
         })
         .catch(err => {
             res.status(500).json({message: err})
@@ -46,7 +46,7 @@ module.exports = {
     remove: function(req, res) {
         Comment.deleteOne({
             _id: req.body.id,
-            author: req.userId 
+            commenter: req.userId
         })
         .then(data => {
             res.status(200).json({data: data})

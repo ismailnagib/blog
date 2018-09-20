@@ -1,10 +1,12 @@
 <template>
-  <button v-if='islogin' v-on:click='logout()'><strong>Log Out</strong></button>
-  <div v-else class='my-auto'>
-    <input class='mx-2' v-model='email' type="email" placeholder="Email">
-    <input class='mx-2' v-model='password' type="password" placeholder="Password">
-    <button v-on:click='login()'><strong>Log In</strong></button>
-    <div v-bind:style="{color: noticeColor}" id='notice'>{{ notice }}</div>
+  <div id='loginform'>
+    <button v-if='islogin' v-on:click='logout()'><strong>Log Out</strong></button>
+    <div v-else class='my-auto'>
+      <input class='mx-2' v-model='email' type="email" placeholder="Email">
+      <input class='mx-2' v-model='password' type="password" placeholder="Password">
+      <button v-on:click='login()'><strong>Log In</strong></button>
+      <div v-bind:style="{color: noticeColor}" id='notice'>{{ notice }}</div>
+    </div>
   </div>
 </template>
 
@@ -79,10 +81,7 @@ export default {
 </script>
 
 <style>
-  button {
-    border: none;
-    background-color: white;
-    color: #42b983;
-    cursor: pointer
+  #loginform {
+    margin-top: 10px;
   }
 </style>

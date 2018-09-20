@@ -5,7 +5,10 @@ module.exports = {
     show: function(req, res) {
         Article.find({})
         .populate('author')
-        .populate('comments')
+        .populate({
+            path: 'comments',
+            populate: {path: 'commenter'}
+        })
         .then(data => {
             res.status(200).json({data: data})
         })
@@ -17,7 +20,10 @@ module.exports = {
     showOne: function(req, res) {
         Article.findById(req.params.id)
         .populate('author')
-        .populate('comments')
+        .populate({
+            path: 'comments',
+            populate: {path: 'commenter'}
+        })
         .then(data => {
             res.status(200).json({data: data})
         })

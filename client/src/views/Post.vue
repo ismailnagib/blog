@@ -54,7 +54,19 @@ export default {
   .post {
     margin-top: 12vh;
   }
-  textarea:focus, input:focus, button:focus {
-    outline: none;
+  .closeModal {
+    margin-top: 1%;
+    margin-left: 90%;
+  }
+  .iconBtn {
+    margin: 5px 0;
+    float: right;
+    height: 30px;
+    padding: 5px 10px;
+    border-radius: 15px;
+  }
+  .iconBtn:hover {
+    color: #42b983;
+    background-color: gainsboro;
   }
 </style>

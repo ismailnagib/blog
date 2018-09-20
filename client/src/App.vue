@@ -69,11 +69,27 @@ export default {
 }
 
 #header {
-  height: 8vh;
+  height: 9vh;
   background-color: white;
 }
 #loginform {
   text-align: right;
   right: 10%;
+}
+button {
+  border: none;
+  background-color: white;
+  color: #42b983;
+  cursor: pointer;
+  height: 40px;
+  padding: 10px 20px;
+  border-radius: 20px;
+}
+button:hover {
+  background-color:#42b983;
+  color: white;
+}
+textarea:focus, input:focus, button:focus {
+  outline: none;
 }
 </style>

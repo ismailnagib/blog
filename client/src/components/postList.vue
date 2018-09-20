@@ -5,7 +5,7 @@
       <div v-if='openModal'>
         <div id='backdrop'></div>
         <div id='addPost'>
-          <button id='closeModal' v-on:click="toggleModal()" title='Close'><i class="far fa-times-circle"></i></button><br>
+          <button class='iconBtn closeModal' v-on:click="toggleModal()" title='Close'><i class="far fa-times-circle"></i></button><br>
           <div id='addPostInput'>
             <input v-model='newtitle' type="text" placeholder="Title">
             <textarea rows=18 v-model='newcontent' placeholder="Content"></textarea>
@@ -140,10 +140,6 @@ export default {
     margin-top: 1%;
     font-size: 20px;
     padding: 10px;
-  }
-  #closeModal {
-    margin-top: 1%;
-    margin-left: 95%;
   }
   .modalBtn {
     height: 50px;

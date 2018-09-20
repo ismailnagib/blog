@@ -2,14 +2,17 @@
   <div id='postLarge'>
     <div class="row mx-auto" v-if='showAll'>
       <router-link :to="{name: 'postdetail', params: {id:`${post._id}`}}" class="col-12 card mb-4" v-for='post in posts' :key='post._id'>
-        <div class="cardBtn" v-if='loggedInAuthor === post.author._id'>
-          <button v-on:click='removeModal(post._id)'><i class="fas fa-trash-alt"></i></button>
-          <button v-on:click='editModal(post._id, post.title, post.content)'><i class="fas fa-edit"></i></button>
+        <div v-if='loggedInUser === post.author._id'>
+          <button class='iconBtn' v-on:click='removeModal(post._id)'><i class="fas fa-trash-alt"></i></button>
+          <button class='iconBtn' v-on:click='editModal(post._id, post.title, post.content)'><i class="fas fa-edit"></i></button>
+        </div>
+        <div v-else>
+            <div id='cardTopSpace'></div>
         </div>
         <img class="card-img-top" src="https://via.placeholder.com/700x300">
         <div class="card-body">
           <h5 id='postTitle' class="card-title border-bottom mb-4 pb-2"><strong>{{ post.title }}</strong></h5>
-          <p class="card-text">{{ post.content  | slice  }}</p>
+          <p class="card-text pwithindent">{{ post.content  | pSlice  }}</p>
         </div>
       </router-link>
     </div>
@@ -19,7 +22,23 @@
         <div class="mx-auto mt-4">
           <br><h3 class="my-2 border-bottom">{{ detailed.title }}</h3>
           <h5 class="my-2">by {{ detailed.author }}</h5><br><br>
-          <p class="my-2">{{ detailed.content }}</p>
+          <p class="my-2 pwithindent">{{ detailed.content }}</p>
+          <div id='commentbox' v-if='islogin'>
+            <h5><strong>Add your comment here</strong></h5>
+            <textarea rows=2 v-model='newcomment' placeholder="Write some words"></textarea>
+            <button v-on:click='addComment()'>Add comment</button>
+          </div>
+          <div class='border-bottom' id='comments' v-if='detailed.comments.length > 0'>
+            <h5><strong>Comments</strong></h5>
+            <div v-for="comment in detailed.comments" :key='comment._id' class="border-top pt-2">
+              <button class="iconBtn" v-if='loggedInUser === comment.commenter._id' v-on:click='removeComment(comment._id)'><i class="fas fa-trash-alt"></i></button>
+              <h6><strong>{{ comment.commenter.name }}</strong> commented on {{ comment.createdAt | dateSlice }}</h6>
+              <p id='comment'>{{ comment.words }}</p>
+            </div>
+          </div>
+          <div v-else id='nocomment'>
+            <h5>There's no comment on this post yet</h5>
+          </div>
         </div>
       </div>
     </div>
@@ -27,7 +46,7 @@
     <div v-if='openEdit'>
       <div id='backdrop'></div>
       <div id='editPost'>
-        <button id='closeModal' v-on:click="editModal()" title='Close'><i class="far fa-times-circle"></i></button><br>
+        <button class="iconBtn closeModal" v-on:click="editModal()" title='Close'><i class="far fa-times-circle"></i></button><br>
         <div id='editPostInput'>
           <input v-model='newtitle' type="text" placeholder="Title">
           <textarea rows=18 v-model='newcontent' placeholder="Content"></textarea>
@@ -40,11 +59,11 @@
     <div v-if='openRemove'>
       <div id='backdrop'></div>
       <div id='removePost'>
-        <button id='closeModal' v-on:click="removeModal()" title='Close'><i class="far fa-times-circle"></i></button><br>
+        <button class="iconBtn closeModal" v-on:click="removeModal()" title='Close'><i class="far fa-times-circle"></i></button><br>
         <h3>Are you sure?</h3>
         <h5>You're about to delete the post permanently</h5>
         <button class='modalBtn' v-on:click="removeModal()">Nope</button>
-        <button class='modalBtn' id='removeBtn' v-on:click="removePost()">Yeah</button><br>
+        <button class='modalBtn' v-on:click="removePost()">Yeah</button><br>
       </div>
     </div>
   </div>
@@ -60,13 +79,14 @@ export default {
     return {
       showAll: true,
       detailed: {},
-      loggedInAuthor: localStorage.getItem('userId'),
+      loggedInUser: localStorage.getItem('userId'),
       openEdit: false,
       openRemove: false,
       newtitle: '',
       newcontent: '',
       editId: '',
-      removeId: ''
+      removeId: '',
+      newcomment: ''
     }
   },
   methods: {
@@ -78,9 +98,11 @@ export default {
         })
           .then(data => {
             this.detailed = {
+              id: id,
               title: data.data.data.title,
               author: data.data.data.author.name,
-              content: data.data.data.content
+              content: data.data.data.content,
+              comments: data.data.data.comments
             }
             this.showAll = false
           })
@@ -140,10 +162,24 @@ export default {
         .catch(err => {
           console.log(err)
         })
+    },
+    addComment: function () {
+      axios({
+        method: 'post',
+        url: 'http://localhost:3000/comments/',
+        data: { postId: this.detailed.id, words: this.newcomment, token: localStorage.getItem('jwtToken') }
+      })
+        .then(data => {
+          this.newcomment = ''
+          this.showOne(this.detailed.id)
+        })
+        .catch(err => {
+          alert(JSON.stringify(err.response.data.message.errors.commenter))
+        })
     }
   },
   filters: {
-    slice (value) {
+    pSlice (value) {
       if (value.length > 300) {
         if (value[299] === ' ') {
           return value.slice(0, 300) + '. . .'
@@ -153,6 +189,9 @@ export default {
       } else {
         return value
       }
+    },
+    dateSlice (value) {
+      return value.slice(0, 10)
     }
   },
   watch: {
@@ -160,7 +199,7 @@ export default {
       this.showOne(this.$route.params.id)
     },
     islogin: function () {
-      this.loggedInAuthor = localStorage.getItem('userId')
+      this.loggedInUser = localStorage.getItem('userId')
     }
   }
 }
@@ -173,6 +212,8 @@ export default {
   #postLarge p {
     word-wrap: break-word;
     text-align: justify;
+  }
+  .pwithindent {
     text-indent: 10%;
   }
   #postLarge a {
@@ -181,10 +222,6 @@ export default {
   }
   #postLarge #postTitle:hover {
     color: #42b983
-  }
-  .cardBtn button {
-    margin: 5px 0;
-    float: right
   }
   #backdrop {
     position: fixed;
@@ -226,10 +263,6 @@ export default {
     font-size: 20px;
     padding: 10px;
   }
-  #closeModal {
-    margin-top: 1%;
-    margin-left: 95%;
-  }
   .modalBtn {
     height: 50px;
     font-size: 20px;
@@ -238,5 +271,35 @@ export default {
     color: white;
     margin: 20px 10px;
     border-radius: 25px;
+  }
+  #comments {
+    text-align: justify;
+  }
+  #comment {
+    margin: 10px 0;
+    font-size: 18px;
+  }
+  #commentbox {
+    margin-top: 3vh;
+  }
+  #commentbox h5 {
+    text-align: left;
+    margin-left: 10px;
+  }
+  #commentbox h5:hover {
+    color: #42b983
+  }
+  #commentbox textarea{
+    width: 99%;
+    margin: 1%;
+    font-size: 14px;
+    padding: 10px;
+  }
+  #nocomment, #comments {
+    margin-top: 3vh;
+    margin-bottom: 6vh;
+  }
+  #cardTopSpace {
+    height: 40px;
   }
 </style>

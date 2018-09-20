@@ -1,23 +1,10 @@
-const Article = require('../models/articleModel')
+const Comment = require('../models/commentModel')
 
 module.exports = {
     
     show: function(req, res) {
-        Article.find({})
-        .populate('author')
-        .populate('comments')
-        .then(data => {
-            res.status(200).json({data: data})
-        })
-        .catch(err => {
-            res.status(500).json({message: err})
-        })
-    },
-
-    showOne: function(req, res) {
-        Article.findById(req.params.id)
-        .populate('author')
-        .populate('comments')
+        Comment.find({})
+        .populate('writer')
         .then(data => {
             res.status(200).json({data: data})
         })
@@ -27,7 +14,7 @@ module.exports = {
     },
 
     add: function(req, res) {
-        Article.create({
+        Comment.create({
             title: req.body.title,
             content: req.body.content,
             author: req.userId
@@ -41,7 +28,7 @@ module.exports = {
     },
 
     edit: function(req, res) {
-        Article.updateOne({
+        Comment.updateOne({
             _id: req.body.id,
             author: req.userId
         }, {
@@ -57,7 +44,7 @@ module.exports = {
     },
 
     remove: function(req, res) {
-        Article.deleteOne({
+        Comment.deleteOne({
             _id: req.body.id,
             author: req.userId 
         })

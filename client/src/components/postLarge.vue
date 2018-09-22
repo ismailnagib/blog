@@ -240,6 +240,11 @@ export default {
     islogin: function () {
       this.loggedInUser = localStorage.getItem('userId')
     }
+  },
+  created () {
+    if (this.$route.params.id) {
+      this.showOne(this.$route.params.id)
+    }
   }
 }
 </script>

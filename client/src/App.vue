@@ -92,4 +92,10 @@ button:hover {
 textarea:focus, input:focus, button:focus {
   outline: none;
 }
+.unselectable {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 </style>

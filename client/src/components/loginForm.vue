@@ -5,7 +5,7 @@
       <input class='mx-2' v-model='email' type="email" placeholder="Email">
       <input class='mx-2' v-model='password' type="password" placeholder="Password">
       <button v-on:click='login()'><strong>Log In</strong></button>
-      <div v-bind:style="{color: noticeColor}" id='notice'>{{ notice }}</div>
+      <div class='unselectable' v-bind:style="{color: noticeColor}" id='notice'>{{ notice }}</div>
     </div>
   </div>
 </template>

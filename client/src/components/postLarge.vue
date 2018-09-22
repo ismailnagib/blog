@@ -1,7 +1,7 @@
 <template>
   <div id='postLarge'>
     <div class="row mx-auto" v-if='showAll'>
-      <router-link :to="{name: 'postdetail', params: {id:`${post._id}`}}" class="col-12 card mb-4" v-for='post in posts' :key='post._id'>
+      <div class="col-12 card mb-4" v-for='post in posts' :key='post._id'>
         <div v-if='loggedInUser === post.author._id'>
           <button class='iconBtn' v-on:click='removeModal(post._id)'><i class="fas fa-trash-alt"></i></button>
           <button class='iconBtn' v-on:click='editModal(post._id, post.title, post.content)'><i class="fas fa-edit"></i></button>
@@ -9,12 +9,14 @@
         <div v-else>
             <div id='cardTopSpace'></div>
         </div>
-        <img class="card-img-top" src="https://via.placeholder.com/700x300">
-        <div class="card-body">
-          <h5 id='postTitle' class="card-title border-bottom mb-4 pb-2"><strong>{{ post.title }}</strong></h5>
-          <p class="card-text pwithindent">{{ post.content  | pSlice  }}</p>
-        </div>
-      </router-link>
+        <router-link :to="{name: 'postdetail', params: {id:`${post._id}`}}">
+          <img class="card-img-top" src="https://via.placeholder.com/700x300">
+          <div class="card-body">
+            <h5 id='postTitle' class="card-title border-bottom mb-4 pb-2"><strong>{{ post.title }}</strong></h5>
+            <p class="card-text pwithindent">{{ post.content  | pSlice  }}</p>
+          </div>
+        </router-link>
+      </div>
     </div>
     <div class='row' v-else>
       <div class="col-12">
@@ -31,7 +33,7 @@
           <div class='border-bottom' id='comments' v-if='detailed.comments.length > 0'>
             <h5><strong>Comments</strong></h5>
             <div v-for="comment in detailed.comments" :key='comment._id' class="border-top pt-2">
-              <button class="iconBtn" v-if='loggedInUser === comment.commenter._id' v-on:click='removeComment(comment._id)'><i class="fas fa-trash-alt"></i></button>
+              <button class="iconBtn" v-if='loggedInUser === comment.commenter._id' v-on:click='removeCommentModal(comment._id)'><i class="fas fa-trash-alt"></i></button>
               <h6><strong>{{ comment.commenter.name }}</strong> commented on {{ comment.createdAt | dateSlice }}</h6>
               <p id='comment'>{{ comment.words }}</p>
             </div>
@@ -58,12 +60,23 @@
 
     <div v-if='openRemove'>
       <div id='backdrop'></div>
-      <div id='removePost'>
+      <div class='removeConfirmation'>
         <button class="iconBtn closeModal" v-on:click="removeModal()" title='Close'><i class="far fa-times-circle"></i></button><br>
         <h3>Are you sure?</h3>
         <h5>You're about to delete the post permanently</h5>
         <button class='modalBtn' v-on:click="removeModal()">Nope</button>
         <button class='modalBtn' v-on:click="removePost()">Yeah</button><br>
+      </div>
+    </div>
+
+    <div v-if='openRemoveComment'>
+      <div id='backdrop'></div>
+      <div class='removeConfirmation'>
+        <button class="iconBtn closeModal" v-on:click="removeCommentModal()" title='Close'><i class="far fa-times-circle"></i></button><br>
+        <h3>Are you sure?</h3>
+        <h5>You're about to delete the comment permanently</h5>
+        <button class='modalBtn' v-on:click="removeCommentModal()">Nope</button>
+        <button class='modalBtn' v-on:click="removeComment()">Yeah</button><br>
       </div>
     </div>
   </div>
@@ -86,7 +99,9 @@ export default {
       newcontent: '',
       editId: '',
       removeId: '',
-      newcomment: ''
+      newcomment: '',
+      openRemoveComment: false,
+      removeCommentId: ''
     }
   },
   methods: {
@@ -174,7 +189,31 @@ export default {
           this.showOne(this.detailed.id)
         })
         .catch(err => {
-          alert(JSON.stringify(err.response.data.message.errors.commenter))
+          console.log(err)
+        })
+    },
+    removeCommentModal: function (id) {
+      if (this.openRemoveComment) {
+        this.openRemoveComment = false
+      } else {
+        this.openRemoveComment = true
+      }
+      if (id) {
+        this.removeCommentId = id
+      }
+    },
+    removeComment: function () {
+      axios({
+        method: 'delete',
+        url: 'http://localhost:3000/comments/',
+        data: { id: this.removeCommentId, token: localStorage.getItem('jwtToken') }
+      })
+        .then(data => {
+          this.openRemoveComment = false
+          this.showOne(this.detailed.id)
+        })
+        .catch(err => {
+          console.log(err)
         })
     }
   },
@@ -241,13 +280,13 @@ export default {
     height: 70%;
     z-index: 2101;
   }
-  #removePost {
+  .removeConfirmation {
     position: fixed;
     background-color: white;
     left: 25%;
     top: 37.5%;
     width: 50%;
-    height: 25%;
+    height: 20%;
     z-index: 2101;
   }
   #editPostInput textarea {

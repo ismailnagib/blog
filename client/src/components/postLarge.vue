@@ -20,6 +20,13 @@
     </div>
     <div class='row' v-else>
       <div class="col-12">
+        <div v-if='loggedInUser === detailed.authorId'>
+          <button class='iconBtn' v-on:click='removeModal(detailed.id, "detailed")'><i class="fas fa-trash-alt"></i></button>
+          <button class='iconBtn' v-on:click='editModal(detailed.id, detailed.title, detailed.content, "detailed")'><i class="fas fa-edit"></i></button>
+        </div>
+        <div v-else>
+            <div id='cardTopSpace'></div>
+        </div>
         <img id='detailImg' src="https://via.placeholder.com/700x300">
         <div class="mx-auto mt-4">
           <br><h3 class="my-2 border-bottom">{{ detailed.title }}</h3>
@@ -101,7 +108,8 @@ export default {
       removeId: '',
       newcomment: '',
       openRemoveComment: false,
-      removeCommentId: ''
+      removeCommentId: '',
+      detailedUD: false
     }
   },
   methods: {
@@ -116,6 +124,7 @@ export default {
               id: id,
               title: data.data.data.title,
               author: data.data.data.author.name,
+              authorId: data.data.data.author._id,
               content: data.data.data.content,
               comments: data.data.data.comments
             }
@@ -128,7 +137,7 @@ export default {
         this.showAll = true
       }
     },
-    editModal: function (id, title, content) {
+    editModal: function (id, title, content, from) {
       if (this.openEdit) {
         this.openEdit = false
       } else {
@@ -139,6 +148,11 @@ export default {
         this.newtitle = title
         this.newcontent = content
       }
+      if (from === 'detailed') {
+        this.detailedUD = true
+      } else {
+        this.detailedUD = false
+      }
     },
     editPost: function () {
       axios({
@@ -147,14 +161,18 @@ export default {
         data: { id: this.editId, token: localStorage.getItem('jwtToken'), title: this.newtitle, content: this.newcontent }
       })
         .then(data => {
-          this.$emit('reload')
+          if (this.detailedUD) {
+            this.showOne(this.detailed.id)
+          } else {
+            this.$emit('reload')
+          }
           this.openEdit = false
         })
         .catch(err => {
           console.log(err)
         })
     },
-    removeModal: function (id) {
+    removeModal: function (id, from) {
       if (this.openRemove) {
         this.openRemove = false
       } else {
@@ -162,6 +180,11 @@ export default {
       }
       if (id) {
         this.removeId = id
+      }
+      if (from === 'detailed') {
+        this.detailedUD = true
+      } else {
+        this.detailedUD = false
       }
     },
     removePost: function () {
@@ -171,7 +194,12 @@ export default {
         data: { id: this.removeId, token: localStorage.getItem('jwtToken') }
       })
         .then(data => {
-          this.$emit('reload')
+          if (this.detailedUD) {
+            this.$emit('reload')
+            this.$router.push({ path: '/post' })
+          } else {
+            this.$emit('reload')
+          }
           this.openRemove = false
         })
         .catch(err => {
@@ -219,11 +247,11 @@ export default {
   },
   filters: {
     pSlice (value) {
-      if (value.length > 300) {
-        if (value[299] === ' ') {
-          return value.slice(0, 300) + '. . .'
+      if (value.length > 280) {
+        if (value[279] === ' ') {
+          return value.slice(0, 280) + '. . .'
         } else {
-          return value.slice(0, 300) + ' . . .'
+          return value.slice(0, 280) + ' . . .'
         }
       } else {
         return value

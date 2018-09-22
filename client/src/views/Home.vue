@@ -1,28 +1,31 @@
 <template>
   <div class="home">
     <img src="../assets/logo.png">
-    <HelloWorld msg="Welcome to My Blog App"/>
+    <h2 id='welcome'>Welcome to My Blog App</h2>
+    <h4>made with <a href='https://vuejs.org/' id='vue' target='_blank'>Vue.js</a></h4>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
 
 export default {
-  name: 'home',
-  components: {
-    HelloWorld
-  }
+  name: 'home'
 }
 </script>
 
 <style>
   .home {
+    margin-top: 20vh;
+  }
+  #welcome {
     margin-top: 10vh;
   }
-
-  img:hover {
+  #vue {
+    text-decoration: none;
+    color: black;
+  }
+  #vue:hover {
     color: #42b983;
   }
 </style>

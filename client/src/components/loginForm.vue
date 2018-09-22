@@ -1,12 +1,12 @@
 <template>
   <div id='loginform'>
-    <button v-if='islogin' v-on:click='logout()'><strong>Log Out</strong></button>
+    <button v-if='islogin' class="logBtn" id='logOutBtn' v-on:click='logout()'><strong>Log Out</strong></button>
     <div v-else class='my-auto'>
       <span v-if='isregistering'><input class='mx-2 logInput' v-model='name' type="text" placeholder="Name">|</span>
       <input class='mx-2 logInput' v-model='email' type="email" placeholder="Email">|
       <input class='mx-2 logInput' v-model='password' type="password" placeholder="Password">|
-      <button class='logBtn' v-on:click='login()'><strong>Log In</strong></button> |
-      <button class='logBtn' v-on:click='register()'><strong>Register</strong></button>
+      <button class='logBtn' v-on:click='login()' v-bind:style="{color: loginColor}"><strong>Log In</strong></button> |
+      <button class='logBtn' v-on:click='register()' v-bind:style="{color: registerColor}"><strong>Register</strong></button>
       <div class='unselectable' v-bind:style="{color: noticeColor}" id='notice'>{{ notice }}</div>
     </div>
   </div>
@@ -25,7 +25,9 @@ export default {
       notice: 'placeholder',
       noticeColor: 'white',
       islogin: false,
-      isregistering: false
+      isregistering: false,
+      loginColor: '#42b983',
+      registerColor: 'black'
     }
   },
   methods: {
@@ -34,6 +36,8 @@ export default {
         this.isregistering = false
         this.noticeColor = 'white'
         this.notice = 'placeholder'
+        this.loginColor = '#42b983'
+        this.registerColor = 'black'
       } else {
         axios({
           method: 'post',
@@ -92,6 +96,8 @@ export default {
             this.notice = "Registration successful. You can enjoy the the web's full feature now by logging in."
             this.noticeColor = 'green'
             this.isregistering = false
+            this.loginColor = '#42b983'
+            this.registerColor = 'black'
           })
           .catch(err => {
             this.notice = err.response.data.message
@@ -101,6 +107,8 @@ export default {
         this.isregistering = true
         this.noticeColor = 'white'
         this.notice = 'placeholder'
+        this.loginColor = 'black'
+        this.registerColor = '#42b983'
       }
     }
   },
@@ -127,6 +135,8 @@ export default {
   }
   .logBtn:hover {
     background-color: rgba(211,211,211,0.3);
-    color: #42b983
+  }
+  #logOutBtn:hover {
+    color:#42b983;
   }
 </style>

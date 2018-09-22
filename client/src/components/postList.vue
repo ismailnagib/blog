@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div class="row my-2">
+    <div id='searchbar' class="row my-2">
+      <div id=searchIcon><i class="fas fa-search"></i></div>
       <input id='search' v-model="keyword" v-on:keyup='searchPost()' type="text" placeholder="Search the blog" onfocus='this.placeholder=""' onblur='this.placeholder="Search the blog"'>
     </div>
     <div class="row my-2">
@@ -115,8 +116,18 @@ export default {
 </script>
 
 <style>
+  #searchIcon {
+    height: 40px;
+    width: 10%;
+    text-align: center;
+    font-size: 20px;
+  }
+  .fa-search {
+    padding: 10px 9px;
+    color: #42b983;
+  }
   #search {
-    width: 100%;
+    width: 90%;
     background-color: rgba(211,211,211,0.3);
     font-size: 20px;
     height: 40px;
@@ -124,11 +135,13 @@ export default {
     border-radius: 20px;
     padding: 10px 25px;
     font-weight: bold;
-    margin-bottom: 1vh;
   }
   #search:focus {
     box-shadow: 0 0 5px rgba(66, 185, 131, 0.8);
     background-color: white;
+  }
+  #searchbar {
+    margin-bottom: 1vh;
   }
   #postList {
     width: 100%

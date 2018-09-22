@@ -267,6 +267,9 @@ export default {
     },
     islogin: function () {
       this.loggedInUser = localStorage.getItem('userId')
+    },
+    posts: function () {
+      this.$router.push({ path: '/post' })
     }
   },
   created () {

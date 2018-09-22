@@ -2,11 +2,11 @@
   <div class="post">
     <div class="container">
       <div class="row">
-        <div class="col-4">
+        <div class="col-12 col-md-4">
           <postlist v-bind:islogin='islogin' v-bind:needreload='needreload' @list='throwPost' @reloaded='toggleReload'></postlist>
         </div>
-        <div class="col-1"></div>
-        <div class="col-7">
+        <div class="col-12 col-md-1"></div>
+        <div class="col-12 col-md-7">
           <postlarge v-bind:islogin='islogin' v-bind:posts='posts' @reload='toggleReload'></postlarge>
         </div>
       </div>

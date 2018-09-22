@@ -2,9 +2,11 @@
   <div id='loginform'>
     <button v-if='islogin' v-on:click='logout()'><strong>Log Out</strong></button>
     <div v-else class='my-auto'>
-      <input class='mx-2' v-model='email' type="email" placeholder="Email">
-      <input class='mx-2' v-model='password' type="password" placeholder="Password">
-      <button v-on:click='login()'><strong>Log In</strong></button>
+      <span v-if='isregistering'><input class='mx-2 logInput' v-model='name' type="text" placeholder="Name">|</span>
+      <input class='mx-2 logInput' v-model='email' type="email" placeholder="Email">|
+      <input class='mx-2 logInput' v-model='password' type="password" placeholder="Password">|
+      <button class='logBtn' v-on:click='login()'><strong>Log In</strong></button> |
+      <button class='logBtn' v-on:click='register()'><strong>Register</strong></button>
       <div class='unselectable' v-bind:style="{color: noticeColor}" id='notice'>{{ notice }}</div>
     </div>
   </div>
@@ -17,34 +19,42 @@ export default {
   name: 'loginform',
   data: function () {
     return {
+      name: '',
       email: '',
       password: '',
       notice: 'placeholder',
       noticeColor: 'white',
-      islogin: false
+      islogin: false,
+      isregistering: false
     }
   },
   methods: {
     login: function () {
-      axios({
-        method: 'post',
-        url: 'http://localhost:3000/users/login',
-        data: { email: this.email, password: this.password }
-      })
-        .then(data => {
-          localStorage.setItem('jwtToken', data.data.token)
-          localStorage.setItem('userId', data.data.userId)
-          this.islogin = true
-          this.noticeColor = 'white'
-          this.notice = 'placeholder'
-          this.email = ''
-          this.password = ''
-          this.$emit('log', this.islogin)
+      if (this.isregistering) {
+        this.isregistering = false
+        this.noticeColor = 'white'
+        this.notice = 'placeholder'
+      } else {
+        axios({
+          method: 'post',
+          url: 'http://localhost:3000/users/login',
+          data: { email: this.email, password: this.password }
         })
-        .catch(err => {
-          this.notice = err.response.data.message
-          this.noticeColor = 'red'
-        })
+          .then(data => {
+            localStorage.setItem('jwtToken', data.data.token)
+            localStorage.setItem('userId', data.data.userId)
+            this.islogin = true
+            this.noticeColor = 'white'
+            this.notice = 'placeholder'
+            this.email = ''
+            this.password = ''
+            this.$emit('log', this.islogin)
+          })
+          .catch(err => {
+            this.notice = err.response.data.message
+            this.noticeColor = 'red'
+          })
+      }
     },
     checklogin: function () {
       axios({
@@ -70,6 +80,28 @@ export default {
       localStorage.clear()
       this.islogin = false
       this.$emit('log', this.islogin)
+    },
+    register: function () {
+      if (this.isregistering) {
+        axios({
+          method: 'post',
+          url: 'http://localhost:3000/users/register',
+          data: { name: this.name, email: this.email, password: this.password }
+        })
+          .then(data => {
+            this.notice = "Registration successful. You can enjoy the the web's full feature now by logging in."
+            this.noticeColor = 'green'
+            this.isregistering = false
+          })
+          .catch(err => {
+            this.notice = err.response.data.message
+            this.noticeColor = 'red'
+          })
+      } else {
+        this.isregistering = true
+        this.noticeColor = 'white'
+        this.notice = 'placeholder'
+      }
     }
   },
   created () {
@@ -83,5 +115,18 @@ export default {
 <style>
   #loginform {
     margin-top: 10px;
+  }
+  .logInput {
+    padding: 5px;
+    border: none;
+  }
+  .logBtn {
+    border-radius: 0;
+    padding: 3px 15px;
+    margin: 0px 5px;
+  }
+  .logBtn:hover {
+    background-color: rgba(211,211,211,0.3);
+    color: #42b983
   }
 </style>

@@ -3,7 +3,11 @@ const Article = require('../models/articleModel')
 module.exports = {
     
     show: function(req, res) {
-        Article.find({})
+        Article.find({}, null, {
+            sort: {
+                title: 'ASC'
+            }
+        })
         .populate('author')
         .populate({
             path: 'comments',
@@ -79,6 +83,10 @@ module.exports = {
     search: function(req, res) {
         Article.find({
             title: new RegExp('\S*'+req.body.keyword+'\S*','i')
+        }, null, {
+            sort: {
+                title: 'ASC'
+            }
         })
         .then(data => {
             res.status(200).json({data: data})

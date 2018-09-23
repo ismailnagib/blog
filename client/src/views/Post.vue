@@ -3,11 +3,11 @@
     <div class="container">
       <div class="row">
         <div class="col-12 col-md-4">
-          <postlist v-bind:islogin='islogin' v-bind:needreload='needreload' @list='throwPost' @reloaded='toggleReload'></postlist>
+          <postlist v-bind:islogin='islogin' v-bind:needreload='needreload' v-bind:needleftreload='needleftreload' @list='throwPost' @reloaded='toggleReload' @leftreloaded='toggleLeftReload'></postlist>
         </div>
         <div class="col-12 col-md-1"></div>
         <div class="col-12 col-md-7">
-          <postlarge v-bind:islogin='islogin' v-bind:posts='posts' @reload='toggleReload'></postlarge>
+          <postlarge v-bind:islogin='islogin' v-bind:posts='posts' @reload='toggleReload' @leftreload='toggleLeftReload'></postlarge>
         </div>
       </div>
     </div>
@@ -24,7 +24,8 @@ export default {
   data: function () {
     return {
       posts: [{}],
-      needreload: false
+      needreload: false,
+      needleftreload: false
     }
   },
   methods: {
@@ -36,6 +37,13 @@ export default {
         this.needreload = false
       } else {
         this.needreload = true
+      }
+    },
+    toggleLeftReload: function (value) {
+      if (this.needleftreload) {
+        this.needleftreload = false
+      } else {
+        this.needleftreload = true
       }
     }
   },

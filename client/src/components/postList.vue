@@ -46,7 +46,7 @@ import axios from 'axios'
 
 export default {
   name: 'postlist',
-  props: ['islogin', 'needreload'],
+  props: ['islogin', 'needreload', 'needleftreload'],
   data: function () {
     return {
       keyword: '',
@@ -66,7 +66,9 @@ export default {
       })
         .then(data => {
           this.posts = data.data.data
-          this.$emit('list', data.data.data)
+          if (this.needleftreload === false) {
+            this.$emit('list', data.data.data)
+          }
         })
         .catch(err => {
           console.log(err)
@@ -145,6 +147,12 @@ export default {
       if (this.needreload) {
         this.list()
         this.$emit('reloaded')
+      }
+    },
+    needleftreload: function () {
+      if (this.needleftreload) {
+        this.list()
+        this.$emit('leftreloaded')
       }
     }
   }

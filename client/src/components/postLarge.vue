@@ -29,7 +29,7 @@
         </div>
         <img id='detailImg' src="https://via.placeholder.com/700x300">
         <div class="mx-auto mt-4">
-          <br><h3 class="my-2 border-bottom">{{ detailed.title }}</h3>
+          <br><h3 class="my-2 border-bottom pb-2">{{ detailed.title }}</h3>
           <h5 class="my-2">by {{ detailed.author }}</h5>
           <h6 id='detloc' class="my-2" v-if='detailed.location'>in <strong><span id="detlocbold" v-on:click='gSearch()'>{{ detailed.location }}</span></strong></h6><br><br>
           <p class="my-2 pwithindent">{{ detailed.content }}</p>
@@ -111,7 +111,8 @@ export default {
       openRemoveComment: false,
       removeCommentId: '',
       detailedUD: false,
-      justreloaded: true
+      justReloaded: true,
+      afterEditFromDetailed: false
     }
   },
   methods: {
@@ -165,7 +166,9 @@ export default {
       })
         .then(data => {
           if (this.detailedUD) {
+            this.afterEditFromDetailed = true
             this.showOne(this.detailed.id)
+            this.$emit('leftreload')
           } else {
             this.$emit('reload')
           }
@@ -275,15 +278,16 @@ export default {
       this.loggedInUser = localStorage.getItem('userId')
     },
     posts: function () {
-      if (!this.justreloaded) {
+      if (!this.justReloaded && !this.afterEditFromDetailed) {
         this.$router.push({ path: '/post' })
       } else {
-        this.justreloaded = false
+        this.justReloaded = false
+        this.afterEditFromDetailed = false
       }
     }
   },
   created () {
-    if (this.$route.params.id && this.justreloaded) {
+    if (this.$route.params.id && this.justReloaded) {
       this.showOne(this.$route.params.id)
     }
   }

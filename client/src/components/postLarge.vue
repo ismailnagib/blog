@@ -30,7 +30,8 @@
         <img id='detailImg' src="https://via.placeholder.com/700x300">
         <div class="mx-auto mt-4">
           <br><h3 class="my-2 border-bottom">{{ detailed.title }}</h3>
-          <h5 class="my-2">by {{ detailed.author }}</h5><br><br>
+          <h5 class="my-2">by {{ detailed.author }}</h5>
+          <h6 id='detloc' class="my-2" v-if='detailed.location'>in <strong><span id="detlocbold" v-on:click='gSearch()'>{{ detailed.location }}</span></strong></h6><br><br>
           <p class="my-2 pwithindent">{{ detailed.content }}</p>
           <div id='commentbox' v-if='islogin'>
             <h5><strong>Add your comment here</strong></h5>
@@ -58,7 +59,7 @@
         <button class="iconBtn closeModal" v-on:click="editModal()" title='Close'><i class="far fa-times-circle"></i></button><br>
         <div id='editPostInput'>
           <input v-model='newtitle' type="text" placeholder="Title">
-          <textarea rows=18 v-model='newcontent' placeholder="Content"></textarea>
+          <textarea rows=19 v-model='newcontent' placeholder="Content"></textarea>
         </div>
         <button class='modalBtn' v-on:click="editModal()">Cancel Edit</button>
         <button class='modalBtn' v-on:click="editPost()">Commit Edit</button><br>
@@ -109,7 +110,8 @@ export default {
       newcomment: '',
       openRemoveComment: false,
       removeCommentId: '',
-      detailedUD: false
+      detailedUD: false,
+      justreloaded: true
     }
   },
   methods: {
@@ -125,6 +127,7 @@ export default {
               title: data.data.data.title,
               author: data.data.data.author.name,
               authorId: data.data.data.author._id,
+              location: data.data.data.location,
               content: data.data.data.content,
               comments: data.data.data.comments
             }
@@ -243,6 +246,9 @@ export default {
         .catch(err => {
           console.log(err)
         })
+    },
+    gSearch: function () {
+      window.open(`https://www.google.com/search?q=${this.detailed.location}`)
     }
   },
   filters: {
@@ -269,11 +275,15 @@ export default {
       this.loggedInUser = localStorage.getItem('userId')
     },
     posts: function () {
-      this.$router.push({ path: '/post' })
+      if (!this.justreloaded) {
+        this.$router.push({ path: '/post' })
+      } else {
+        this.justreloaded = false
+      }
     }
   },
   created () {
-    if (this.$route.params.id) {
+    if (this.$route.params.id && this.justreloaded) {
       this.showOne(this.$route.params.id)
     }
   }
@@ -283,6 +293,12 @@ export default {
 <style>
   #detailImg {
     width: 100%
+  }
+  #detloc {
+    cursor: pointer;
+  }
+  #detlocbold:hover {
+    color: #42b983;
   }
   #postLarge p {
     word-wrap: break-word;
@@ -316,6 +332,19 @@ export default {
     height: 70%;
     z-index: 2101;
   }
+  #editPostInput textarea {
+    width: 90%;
+    margin-top: 1%;
+    border: none;
+    font-size: 16px;
+  }
+  #editPostInput input {
+    border: none;
+    width: 90%;
+    margin-top: 1%;
+    font-size: 20px;
+    padding: 10px;
+  }
   .removeConfirmation {
     position: fixed;
     background-color: white;
@@ -324,19 +353,6 @@ export default {
     width: 50%;
     height: 20%;
     z-index: 2101;
-  }
-  #editPostInput textarea {
-    width: 93%;
-    margin-top: 1%;
-    border: none;
-    font-size: 16px;
-  }
-  #editPostInput input {
-    border: none;
-    width: 95%;
-    margin-top: 1%;
-    font-size: 20px;
-    padding: 10px;
   }
   .modalBtn {
     height: 50px;

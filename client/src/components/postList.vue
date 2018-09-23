@@ -14,7 +14,18 @@
               <button class='iconBtn closeModal' v-on:click="toggleModal()" title='Close'><i class="far fa-times-circle"></i></button><br>
               <div id='addPostInput'>
                 <input v-model='newtitle' type="text" placeholder="Title">
-                <textarea rows=18 v-model='newcontent' placeholder="Content"></textarea>
+                <textarea rows=17 v-model='newcontent' placeholder="Content"></textarea>
+                <div class='userloc' id='locnotadded' v-if='!shareLoc'>
+                  <h5>We've detected that you're writing this from</h5>
+                  <h4>{{ userLoc }}</h4>
+                  <button id='userLocBtn' v-on:click='shareLocToggle()'>Share that as my location in the post</button>
+                </div>
+                <div class='userloc' v-else>
+                  <i class="fas fa-check-circle"></i>
+                  <h4>{{ userLoc }}</h4>
+                  <h5>will be shared as your location in the post</h5>
+                  <button id='userLocBtn' v-on:click='shareLocToggle()'>Cancel location sharing</button>
+                </div>
               </div>
               <button class='modalBtn' v-on:click="toggleModal()">Maybe Later</button>
               <button class='modalBtn' v-on:click="addPost()">Post It Now!</button><br>
@@ -42,7 +53,9 @@ export default {
       posts: [{}],
       newtitle: '',
       newcontent: '',
-      openModal: false
+      openModal: false,
+      userLoc: '',
+      shareLoc: false
     }
   },
   methods: {
@@ -67,10 +80,13 @@ export default {
       }
     },
     addPost: function () {
+      if (!this.shareLoc) {
+        this.userLoc = ''
+      }
       axios({
         method: 'post',
         url: 'http://localhost:3000/articles/',
-        data: { title: this.newtitle, content: this.newcontent, token: localStorage.getItem('jwtToken') }
+        data: { title: this.newtitle, content: this.newcontent, loc: this.userLoc, token: localStorage.getItem('jwtToken') }
       })
         .then(data => {
           this.openModal = false
@@ -99,10 +115,30 @@ export default {
       } else {
         this.list()
       }
+    },
+    detectLoc: function () {
+      axios({
+        method: 'get',
+        url: 'http://ip-api.com/json'
+      })
+        .then(data => {
+          this.userLoc = `${data.data.city}, ${data.data.country}`
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    shareLocToggle: function () {
+      if (this.shareLoc) {
+        this.shareLoc = false
+      } else {
+        this.shareLoc = true
+      }
     }
   },
   created () {
     this.list()
+    this.detectLoc()
   },
   watch: {
     needreload: function () {
@@ -178,23 +214,45 @@ export default {
     position: fixed;
     background-color: white;
     left: 25%;
-    top: 15%;
+    top: 7.5%;
     width: 50%;
-    height: 70%;
+    height: 85%;
     z-index: 2001;
   }
   #addPostInput textarea {
-    width: 93%;
+    width: 90%;
     margin-top: 1%;
     border: none;
     font-size: 16px;
   }
   #addPostInput input {
     border: none;
-    width: 95%;
+    width: 90%;
     margin-top: 1%;
     font-size: 20px;
     padding: 10px;
+  }
+  .userloc {
+    margin: 2% 0px 0.5% 0px;
+    padding: 2% 0px 1% 0px;
+    background-color: rgba(211,211,211,0.2);
+  }
+  #locnotadded {
+    padding: 5% 0px 2.1% 0px;
+  }
+  .fa-check-circle {
+    color: #42b983;
+    font-size: 30px;
+    margin-bottom: 1%;
+  }
+  #userLocBtn {
+    border-radius: 0;
+    padding: 3px 15px;
+    background-color: transparent;
+  }
+  #userLocBtn:hover {
+    background-color: white;
+    color: #42b983;
   }
   .modalBtn {
     height: 50px;

@@ -51,8 +51,8 @@ export default {
     margin-top: 12vh;
   }
   .closeModal {
-    margin-top: 1%;
-    margin-left: 90%;
+    margin-top: 1% !important;
+    margin-right: 1% !important;
   }
   .iconBtn {
     margin: 5px 0;

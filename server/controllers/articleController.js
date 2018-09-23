@@ -36,6 +36,7 @@ module.exports = {
         Article.create({
             title: req.body.title,
             content: req.body.content,
+            location: req.body.loc,
             author: req.userId
         })
         .then(data => {

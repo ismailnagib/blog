@@ -7,8 +7,11 @@ const articleSchema = new Schema({
       required: true
     },
     content: {
-        type: String,
-        required: true
+      type: String,
+      required: true
+    },
+    location: {
+      type: String,
     },
     author: {
       type: Schema.Types.ObjectId,

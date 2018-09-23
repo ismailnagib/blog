@@ -120,7 +120,7 @@ export default {
       if (id !== undefined) {
         axios({
           method: 'get',
-          url: `http://localhost:3000/articles/${id}`
+          url: `http://blog-server.ismailnagib.xyz/articles/${id}`
         })
           .then(data => {
             this.detailed = {
@@ -161,7 +161,7 @@ export default {
     editPost: function () {
       axios({
         method: 'put',
-        url: 'http://localhost:3000/articles/',
+        url: 'http://blog-server.ismailnagib.xyz/articles/',
         data: { id: this.editId, token: localStorage.getItem('jwtToken'), title: this.newtitle, content: this.newcontent }
       })
         .then(data => {
@@ -196,7 +196,7 @@ export default {
     removePost: function () {
       axios({
         method: 'delete',
-        url: 'http://localhost:3000/articles/',
+        url: 'http://blog-server.ismailnagib.xyz/articles/',
         data: { id: this.removeId, token: localStorage.getItem('jwtToken') }
       })
         .then(data => {
@@ -215,7 +215,7 @@ export default {
     addComment: function () {
       axios({
         method: 'post',
-        url: 'http://localhost:3000/comments/',
+        url: 'http://blog-server.ismailnagib.xyz/comments/',
         data: { postId: this.detailed.id, words: this.newcomment, token: localStorage.getItem('jwtToken') }
       })
         .then(data => {
@@ -239,7 +239,7 @@ export default {
     removeComment: function () {
       axios({
         method: 'delete',
-        url: 'http://localhost:3000/comments/',
+        url: 'http://blog-server.ismailnagib.xyz/comments/',
         data: { id: this.removeCommentId, token: localStorage.getItem('jwtToken') }
       })
         .then(data => {

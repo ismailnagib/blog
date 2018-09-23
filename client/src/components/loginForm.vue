@@ -41,7 +41,7 @@ export default {
       } else {
         axios({
           method: 'post',
-          url: 'http://localhost:3000/users/login',
+          url: 'http://blog-server.ismailnagib.xyz/users/login',
           data: { email: this.email, password: this.password }
         })
           .then(data => {
@@ -63,7 +63,7 @@ export default {
     checklogin: function () {
       axios({
         method: 'post',
-        url: 'http://localhost:3000/users/checklogin',
+        url: 'http://blog-server.ismailnagib.xyz/users/checklogin',
         data: { token: localStorage.getItem('jwtToken') }
       })
         .then(data => {
@@ -89,7 +89,7 @@ export default {
       if (this.isregistering) {
         axios({
           method: 'post',
-          url: 'http://localhost:3000/users/register',
+          url: 'http://blog-server.ismailnagib.xyz/users/register',
           data: { name: this.name, email: this.email, password: this.password }
         })
           .then(data => {

@@ -62,7 +62,7 @@ export default {
     list: function () {
       axios({
         method: 'get',
-        url: 'http://localhost:3000/articles/'
+        url: 'http://blog-server.ismailnagib.xyz/articles/'
       })
         .then(data => {
           this.posts = data.data.data
@@ -87,7 +87,7 @@ export default {
       }
       axios({
         method: 'post',
-        url: 'http://localhost:3000/articles/',
+        url: 'http://blog-server.ismailnagib.xyz/articles/',
         data: { title: this.newtitle, content: this.newcontent, loc: this.userLoc, token: localStorage.getItem('jwtToken') }
       })
         .then(data => {
@@ -104,7 +104,7 @@ export default {
       if (this.keyword.length > 0) {
         axios({
           method: 'post',
-          url: 'http://localhost:3000/articles/search',
+          url: 'http://blog-server.ismailnagib.xyz/articles/search',
           data: { keyword: this.keyword }
         })
           .then(data => {

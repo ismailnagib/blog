@@ -14,7 +14,10 @@ chai.use(chaiHttp);
 describe('User', function() {
     
     this.afterAll('Remove dummy data from DB', function (done) {
-        User.deleteMany({})
+        User.deleteOne({
+            name: 'Test',
+            email: 'test@test.com',
+        })
         .then(() => {
             done()
         })

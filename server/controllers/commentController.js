@@ -31,7 +31,7 @@ module.exports = {
                     comments: comments
                 })
                 .then(data => {
-                    res.status(200).json({data: data})
+                    res.status(201).json({data: comment})
                 })
                 .catch(err => {
                     res.status(500).json({message: err})
